@@ -32,11 +32,40 @@ namespace WebApiSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddLogging();
-            services.AddEntityFrameworkSqlite();
-            services.AddDbContext<SampleDbContext>(options =>
+            
+            var dbkind = Configuration["Data:DefaultConnection:ConnectionDBString"];
+            if(dbkind.Equals("sqlite"))
             {
-                options.UseSqlite(Configuration["Data:DefaultConnection:ConnectionString"]);
-            });
+                services.AddEntityFrameworkSqlite();
+                services.AddDbContext<SampleDbContext>(options =>
+                {
+                    options.UseSqlite(Configuration["Data:DefaultConnection:ConnectionString"]);
+                });
+            }
+            if(dbkind.Equals("sqlserver"))
+            {
+                services.AddEntityFrameworkSqlServer();
+                services.AddDbContext<SQLServerDbContext>(options =>
+                {
+                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]);
+                });
+            }
+            if(dbkind.Equals("postgresql"))
+            {
+                services.AddEntityFrameworkNpgsql();
+                services.AddDbContext<PostgreSQLDbContext>(options =>
+                {
+                    options.UseNpgsql(Configuration["Data:DefaultConnection:ConnectionString"]);
+                });
+            }
+            if(dbkind.Equals("inmemory"))
+            {
+                services.AddEntityFrameworkInMemoryDatabase();
+                services.AddDbContext<InMemoryDbContext>(options =>
+                {
+                    options.UseInMemoryDatabase();
+                });
+            }
             // Add framework services.
             services.AddMvc();
             services.AddSwaggerGen();

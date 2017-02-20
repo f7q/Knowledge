@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApiSample.Models
 {
-    public class SampleDbContext : DbContext
+    public class SQLServerDbContext : DbContext
     {
-        public SampleDbContext(DbContextOptions<SampleDbContext> options) :base(options)
+        public SQLServerDbContext(DbContextOptions<SQLServerDbContext> options) :base(options)
         {
             
         }
@@ -25,20 +25,19 @@ namespace WebApiSample.Models
                     .Build();
 
                 var dbkind = config["Data:DefaultConnection:ConnectionDBString"];
-                if(dbkind.Equals("sqlite"))
+                if(dbkind.Equals("sqlserver"))
                 {
-                    optionsBuilder.UseSqlite(config["Data:DefaultConnection:ConnectionString"]);
+                    optionsBuilder.UseSqlServer(config["Data:DefaultConnection:ConnectionString"]);
                 }
             }
-
-            base.OnConfiguring(optionsBuilder);
         }
 
         public DbSet<Value> Values { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Value>().HasKey(m => m.Id);
+            //builder.Entity<Value>().ToTable("Values");
+            builder.Entity<Value>().HasKey(m => m.Id); // この場合、自動採番がデフォルトで、ID無しで登録になる。
             base.OnModelCreating(builder);
         }
     }

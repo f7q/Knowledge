@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApiSample.Models
 {
-    public class SampleDbContext : DbContext
+    public class PostgreSQLDbContext : DbContext
     {
-        public SampleDbContext(DbContextOptions<SampleDbContext> options) :base(options)
+        public PostgreSQLDbContext(DbContextOptions<PostgreSQLDbContext> options) :base(options)
         {
             
         }
@@ -25,9 +25,9 @@ namespace WebApiSample.Models
                     .Build();
 
                 var dbkind = config["Data:DefaultConnection:ConnectionDBString"];
-                if(dbkind.Equals("sqlite"))
+                if(dbkind.Equals("postgresql"))
                 {
-                    optionsBuilder.UseSqlite(config["Data:DefaultConnection:ConnectionString"]);
+                    optionsBuilder.UseNpgsql(config["Data:DefaultConnection:ConnectionString"]);
                 }
             }
 

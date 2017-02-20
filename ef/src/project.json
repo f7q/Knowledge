@@ -9,8 +9,16 @@
       "type":"build",
       "version": "1.0.1"
     },
-    //"Microsoft.EntityFrameworkCore.SqlServer": "1.0.1"
-    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.1"
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.1",
+    //"Microsoft.EntityFrameworkCore.Sqlite": "1.0.1"
+    "Microsoft.EntityFrameworkCore.Tools.DotNet": {
+      "version": "1.0.0-preview3-final",
+      "type": "build"
+    },
+    "Microsoft.EntityFrameworkCore.SqlServer.Design": {
+      "version": "1.0.1",
+      "type": "build"
+    }
   },
   "tools": {
     "Microsoft.EntityFrameworkCore.Tools.DotNet": "1.0.0-preview3-final"
@@ -23,7 +31,11 @@
           "version": "1.0.1"
         }
       },
-      "imports": "dnxcore50"
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
     }
   }
 }

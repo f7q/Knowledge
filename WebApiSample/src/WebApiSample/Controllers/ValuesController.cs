@@ -5,15 +5,36 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSample.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace WebApiSample.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        private SampleDbContext _dbContext { get; set; }
+        //private InMemoryDbContext _dbContext { get; set; }
+        //private SampleDbContext _dbContext { get; set; }
+        private SQLServerDbContext _dbContext { get; set; }
         private ILogger _logger { get; set; }
+
+        /*
+        public ValuesController(InMemoryDbContext dbContext, ILogger<ValuesController> logger)
+        {
+            _dbContext = dbContext;
+            _logger = logger;
+        }
+        public ValuesController(PostgreSQLDbContext dbContext, ILogger<ValuesController> logger)
+        {
+            _dbContext = dbContext;
+            _logger = logger;
+        }
         public ValuesController(SampleDbContext dbContext, ILogger<ValuesController> logger)
+        {
+            _dbContext = dbContext;
+            _logger = logger;
+        }
+        */
+        public ValuesController(SQLServerDbContext dbContext, ILogger<ValuesController> logger)
         {
             _dbContext = dbContext;
             _logger = logger;

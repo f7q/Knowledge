@@ -2,127 +2,139 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSample.Models;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApiSample.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        //private InMemoryDbContext _dbContext { get; set; }
-        private SQLiteDbContext _dbContext { get; set; }
-        //private SQLServerDbContext _dbContext { get; set; }
-        private ILogger _logger { get; set; }
+        private readonly SQLiteDbContext _dbContext;
 
-        /*
-        public ValuesController(InMemoryDbContext dbContext, ILogger<ValuesController> logger)
+        public ValuesController(SQLiteDbContext dbContext)
         {
             _dbContext = dbContext;
-            _logger = logger;
         }
-        public ValuesController(PostgreSQLDbContext dbContext, ILogger<ValuesController> logger)
-        {
-            _dbContext = dbContext;
-            _logger = logger;
-        }
-        */
-        public ValuesController(SQLiteDbContext dbContext, ILogger<ValuesController> logger)
-        {
-            _dbContext = dbContext;
-            _logger = logger;
-        }
-        /*
-        public ValuesController(SQLServerDbContext dbContext, ILogger<ValuesController> logger)
-        {
-            _dbContext = dbContext;
-            _logger = logger;
-        }
-        */
+
         // GET api/values
         [HttpGet]
-        public IActionResult Get()
+        public IEnumerable<Value> GetValues()
         {
-            var result = _dbContext.Values.OrderBy(i => i.Name);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
+            return _dbContext.Values;
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> GetValue([FromRoute] int id)
         {
-            var result = _dbContext.Values.Where(i => i.Id == id).First();
-            if (result != null)
+            if (!ModelState.IsValid)
             {
-                return Ok(result);
+                return BadRequest(ModelState);
             }
-            return NotFound();
+
+            Value value = await _dbContext.Values.SingleOrDefaultAsync(m => m.Id == id);
+
+            if (value == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(value);
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody]Value value)
+        public async Task<IActionResult> PostValue([FromBody]Value value)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _dbContext.Values.Add(value);
             try
             {
-                _dbContext.Values.Add(value);
-                _dbContext.SaveChanges();
-                return Ok();
+                await _dbContext.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (DbUpdateException)
             {
-                _logger.LogInformation(ex.ToString());
-                return new NotFoundResult();
+                if (ValueExists(value.Id))
+                {
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
+                }
+                else
+                {
+                    throw;
+                }
             }
+
+            return CreatedAtAction("GetValue", new { id = value.Id }, value);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Value value)
+        public async Task<IActionResult> PutValue([FromRoute]int id, [FromBody]Value value)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != value.Id)
+            {
+                return BadRequest();
+            }
+
+            _dbContext.Entry(value).State = EntityState.Modified;
+
             try
             {
-                var result = _dbContext.Values.Where(i => i.Id == id).First();
-                if(result != null) {
-                    _dbContext.Values.Update(value);
-                    _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ValueExists(id))
+                {
+                    return NotFound();
                 }
                 else
                 {
-                    _dbContext.Values.Add(value);
-                    _dbContext.SaveChanges();
+                    throw;
                 }
-                return Ok();
             }
-            catch (Exception ex)
-            {
-                _logger.LogInformation(ex.ToString());
-                return new NotFoundResult();
-            }
+
+            return NoContent();
         }
+
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteValue([FromRoute]int id)
         {
-            try { 
-                var value = _dbContext.Values.Where(i => i.Id == id).First();
-                _dbContext.Values.Remove(value);
-                _dbContext.SaveChanges();
-                return Ok();
-            }
-            catch (Exception ex)
+            if (!ModelState.IsValid)
             {
-                _logger.LogInformation(ex.ToString());
-                return new NotFoundResult();
-
+                return BadRequest(ModelState);
             }
+
+            Value value = await _dbContext.Values.SingleOrDefaultAsync(m => m.Id == id);
+            if (value == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.Values.Remove(value);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(value);
+        }
+
+        private bool ValueExists(int id)
+        {
+            return _dbContext.Values.Any(e => e.Id == id);
         }
     }
 }

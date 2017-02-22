@@ -17,21 +17,6 @@ namespace WebApplication.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                var config = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
-                    .Build();
-
-                var dbkind = config["Data:DefaultConnection:ConnectionDBString"];
-                if(dbkind.Equals("sqlite"))
-                {
-                    optionsBuilder.UseSqlite(config["Data:DefaultConnection:ConnectionString"]);
-                }
-            }
-
-            base.OnConfiguring(optionsBuilder);
         }
 
         public DbSet<Value> Values { get; set; }

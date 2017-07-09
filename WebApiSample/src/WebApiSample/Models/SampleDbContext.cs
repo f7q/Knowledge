@@ -29,6 +29,19 @@ namespace WebApiSample.Models
                 {
                     optionsBuilder.UseSqlite(config["Data:DefaultConnection:ConnectionString"]);
                 }
+                if (dbkind.Equals("sqlserver"))
+                {
+                    optionsBuilder.UseSqlServer(config["Data:DefaultConnection:ConnectionString"]);
+                }
+                if (dbkind.Equals("postgresql"))
+                {
+                    optionsBuilder.UseNpgsql(config["Data:DefaultConnection:ConnectionString"]);
+                }
+                if (dbkind.Equals("inmemory"))
+                {
+                    //optionsBuilder.UseInMemoryDatabase();
+                    base.OnConfiguring(optionsBuilder);
+                }
             }
 
             base.OnConfiguring(optionsBuilder);

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.Swagger.Model;
+using WebApiFileUploadSample.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApiFileUploadSample
 {
@@ -30,6 +32,16 @@ namespace WebApiFileUploadSample
         {
             // Add framework services.
             services.AddMvc();
+
+            var dbkind = Configuration["Data:DefaultConnection:ConnectionDBString"];
+            if (dbkind.Equals("sqlite"))
+            {
+                services.AddEntityFrameworkSqlite();
+                services.AddDbContext<SQLiteDbContext>(options =>
+                {
+                    options.UseSqlite(Configuration["Data:DefaultConnection:ConnectionString"]);
+                });
+            }
             //var pathToDoc = this.configurationRoot["Swagger:Path"];
             services.AddSwaggerGen();
             services.ConfigureSwaggerGen(options =>

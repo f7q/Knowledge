@@ -12,7 +12,8 @@ namespace WebApiFileUploadSample
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            if (operation.OperationId.ToLower() == "apivaluesuploadpost")
+            if (operation.OperationId.ToLower() == "apivaluesuploadpost" ||
+                operation.OperationId.ToLower() == "apifilesuploadpost")
             {
                 operation.Parameters.Clear();
                 operation.Parameters.Add(new NonBodyParameter

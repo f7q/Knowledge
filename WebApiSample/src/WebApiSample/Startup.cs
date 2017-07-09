@@ -45,7 +45,7 @@ namespace WebApiSample
             if(dbkind.Equals("sqlserver"))
             {
                 services.AddEntityFrameworkSqlServer();
-                services.AddDbContext<SQLServerDbContext>(options =>
+                services.AddDbContext<SampleDbContext>(options =>
                 {
                     options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]);
                 });
@@ -53,7 +53,7 @@ namespace WebApiSample
             if(dbkind.Equals("postgresql"))
             {
                 services.AddEntityFrameworkNpgsql();
-                services.AddDbContext<PostgreSQLDbContext>(options =>
+                services.AddDbContext<SampleDbContext>(options =>
                 {
                     options.UseNpgsql(Configuration["Data:DefaultConnection:ConnectionString"]);
                 });
@@ -61,7 +61,7 @@ namespace WebApiSample
             if(dbkind.Equals("inmemory"))
             {
                 services.AddEntityFrameworkInMemoryDatabase();
-                services.AddDbContext<InMemoryDbContext>(options =>
+                services.AddDbContext<SampleDbContext>(options =>
                 {
                     options.UseInMemoryDatabase();
                 });

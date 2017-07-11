@@ -36,9 +36,13 @@ namespace WebApiFileUploadSample.Models
 
         public DbSet<Value> Values { get; set; }
 
+        public DbSet<File> Files { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Value>().HasKey(m => m.Id);
+            builder.Entity<File>().HasKey(m => m.Id); // この場合、自動採番がデフォルトで、ID無しで登録になる。
+
             base.OnModelCreating(builder);
         }
     }

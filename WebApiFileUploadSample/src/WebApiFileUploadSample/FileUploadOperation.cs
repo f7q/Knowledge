@@ -26,6 +26,23 @@ namespace WebApiFileUploadSample
                 });
                 operation.Consumes.Add("multipart/form-data");
             }
+
+            // オペレーションIDはSwaggerから調べるBy{id}
+            if (operation.OperationId.ToLower() == "apiuploaduploadbyidpost")
+            {
+                var param = operation.Parameters[0]; // パラメータ取得By{id}部分
+                operation.Parameters.Clear();
+                operation.Parameters.Add(param);
+                operation.Parameters.Add(new NonBodyParameter
+                {
+                    Name = "uploadedFile",
+                    In = "formData",
+                    Description = "Upload File",
+                    Required = true,
+                    Type = "file"
+                });
+                operation.Consumes.Add("multipart/form-data");
+            }
         }
 
     }

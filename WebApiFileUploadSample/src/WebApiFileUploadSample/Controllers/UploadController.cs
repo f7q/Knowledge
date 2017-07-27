@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,65 +7,83 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.Extensions.Logging;
 
 namespace WebApiFileUploadSample.Controllers
 {
     using WebApiFileUploadSample.Models;
 
     [Route("api/[controller]")]
-    public class FilesController : Controller
+    public class UploadController : Controller
     {
+        private readonly ILogger logger;
         private readonly SQLiteDbContext _dbContext;
-        public FilesController(SQLiteDbContext dbContext)
+        public UploadController(SQLiteDbContext dbContext, ILogger<UploadController> logger)
         {
+            this.logger = logger;
             _dbContext = dbContext;
         }
-
         // GET: api/values
-        [HttpGet("Image")]
+        [HttpGet("text")]
         public IActionResult Get()
         {
-            try {
-                var list = _dbContext.Values.ToList();
+            try
+            {
+                var list = _dbContext.Files.Select(x => new { Name = x.Name }).ToList();
                 return Ok(list);
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
+                return NotFound();
+            }
+        }
+        [HttpGet("download/{name}")]
+        public IActionResult GetDownload(string name)
+        {
+            try
+            {
+                var val = _dbContext.Files.FirstOrDefault(d => d.Name == name);
+                Response.ContentType = "application/octet-stream";
+                return Ok(new MemoryStream(Encoding.UTF8.GetBytes(val.Text))); //File(val.Text, "text/xml");
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogWarning("", ex);
                 return NotFound();
             }
         }
 
-        // GET api/values/5
-        [HttpGet("Image/{name}")]
+        [HttpGet("text/{name}")]
+        [Produces("text/xml")]
         public IActionResult Get(string name)
         {
             try
             {
-                var val = _dbContext.Values.FirstOrDefault(d => d.Name == name);
-                return File(val.Image, "image/png");
+                var val = _dbContext.Files.FirstOrDefault(d => d.Name == name);
+                return Ok(new MemoryStream(Encoding.UTF8.GetBytes(val.Text))); //File(val.Text, "text/xml");
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
                 return NotFound();
             }
         }
 
         // POST api/values
         [HttpPost]
-        [Route("upload")]
-        public async Task<IActionResult> PostFile(IFormFile uploadedFile)
+        [Route("upload/{id}/")]
+        public async Task<IActionResult> PostFile([FromRoute]short id, IFormFile uploadedFile)
         {
             try
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    var val = new Value();
+                    var val = new File();
                     val.Name = uploadedFile.FileName;
                     await uploadedFile.CopyToAsync(memoryStream);
-                    val.Image = memoryStream.ToArray();
-                    _dbContext.Values.Add(val);
+                    val.Text = Encoding.UTF8.GetString(memoryStream.ToArray());
+                    _dbContext.Files.Add(val);
                     _dbContext.SaveChanges();
                 }
                 // process uploaded files
@@ -74,39 +93,42 @@ namespace WebApiFileUploadSample.Controllers
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
                 return BadRequest();
             }
         }
 
         // DELETE api/values/5
-        [HttpDelete("imageid/{id}")]
+        [HttpDelete("textid/{id}")]
         public IActionResult Delete(int id)
         {
             try
             {
-                var val = _dbContext.Values.FirstOrDefault(d => d.Id == id);
+                var val = _dbContext.Files.FirstOrDefault(d => d.Id == id);
                 _dbContext.Remove(val);
                 _dbContext.SaveChanges();
                 return Ok();
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
                 return NotFound();
             }
         }
         // GET api/values/5
-        [HttpDelete("imagename/{name}")]
+        [HttpDelete("filename/{name}")]
         public IActionResult Delete(string name)
         {
             try
             {
-                var val = _dbContext.Values.FirstOrDefault(d => d.Name == name);
+                var val = _dbContext.Files.FirstOrDefault(d => d.Name == name);
                 _dbContext.Remove(val);
                 _dbContext.SaveChanges();
                 return Ok();
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
                 return NotFound();
             }
         }

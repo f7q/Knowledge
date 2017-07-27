@@ -49,8 +49,8 @@ namespace WebApiFileUploadSample
                 options.SingleApiVersion(new Info
                 {
                     Version = "v1",
-                    Title = "Geo Search API",
-                    Description = "A simple api to search using geo location in Elasticsearch",
+                    Title = "File Store API",
+                    Description = "A simple api to File Access",
                     TermsOfService = "None"
                 });
                 //options.IncludeXmlComments(pathToDoc);

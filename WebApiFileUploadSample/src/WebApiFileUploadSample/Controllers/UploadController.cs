@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace WebApiFileUploadSample.Controllers
 {
@@ -15,9 +16,11 @@ namespace WebApiFileUploadSample.Controllers
     [Route("api/[controller]")]
     public class UploadController : Controller
     {
+        private readonly ILogger logger;
         private readonly SQLiteDbContext _dbContext;
-        public UploadController(SQLiteDbContext dbContext)
+        public UploadController(SQLiteDbContext dbContext, ILogger<UploadController> logger)
         {
+            this.logger = logger;
             _dbContext = dbContext;
         }
         // GET: api/values
@@ -26,16 +29,31 @@ namespace WebApiFileUploadSample.Controllers
         {
             try
             {
-                var list = _dbContext.Files.ToList();
+                var list = _dbContext.Files.Select(x => new { Name = x.Name }).ToList();
                 return Ok(list);
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
+                return NotFound();
+            }
+        }
+        [HttpGet("download/{name}")]
+        public IActionResult GetDownload(string name)
+        {
+            try
+            {
+                var val = _dbContext.Files.FirstOrDefault(d => d.Name == name);
+                Response.ContentType = "application/octet-stream";
+                return Ok(new MemoryStream(Encoding.UTF8.GetBytes(val.Text))); //File(val.Text, "text/xml");
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogWarning("", ex);
                 return NotFound();
             }
         }
 
-        // GET api/values/5
         [HttpGet("text/{name}")]
         [Produces("text/xml")]
         public IActionResult Get(string name)
@@ -47,14 +65,15 @@ namespace WebApiFileUploadSample.Controllers
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
                 return NotFound();
             }
         }
 
         // POST api/values
         [HttpPost]
-        [Route("upload")]
-        public async Task<IActionResult> PostFile(IFormFile uploadedFile)
+        [Route("upload/{id}/")]
+        public async Task<IActionResult> PostFile([FromRoute]short id, IFormFile uploadedFile)
         {
             try
             {
@@ -74,6 +93,7 @@ namespace WebApiFileUploadSample.Controllers
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
                 return BadRequest();
             }
         }
@@ -91,6 +111,7 @@ namespace WebApiFileUploadSample.Controllers
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
                 return NotFound();
             }
         }
@@ -107,6 +128,7 @@ namespace WebApiFileUploadSample.Controllers
             }
             catch (Exception ex)
             {
+                this.logger.LogWarning("", ex);
                 return NotFound();
             }
         }

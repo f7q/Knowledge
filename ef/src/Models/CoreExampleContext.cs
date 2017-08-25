@@ -6,6 +6,16 @@ namespace ef.Models
     {
         public DbSet<Company> Company { get; set; }
         public DbSet<Employee> Employee { get; set; }
+        
+        public CoreExampleContext()
+        {
+
+        }
+
+        public CoreExampleContext(DbContextOptions options) : base(options)
+        {
+
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Builder;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.CommandLineUtils;
 
 namespace ef
 {
@@ -44,6 +43,15 @@ namespace ef
             service.AddEntityFrameworkSqlite()
                 .AddDbContext<CoreExampleContext>(o =>
                 o.UseSqlite(@"Data Source=db.sqlite"));
+            /*
+            service.AddEntityFrameworkNpgsql()
+                .AddDbContext<CoreExampleContext>(o =>
+                o.UseNpgsql(@"Host=localhost;Port=5432;Username=postgres;Password=;Database=postgres;"));
+
+            service.AddEntityFrameworkSqlServer()
+                .AddDbContext<CoreExampleContext>(o =>
+                o.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=aspnetcore;Trusted_Connection=True;MultipleActiveResultSets=true"));
+                                */
             var serviceProvider = service.BuildServiceProvider();
             // Setup Databases
             using (var serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())

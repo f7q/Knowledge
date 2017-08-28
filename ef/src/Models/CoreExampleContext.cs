@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ef.Models
 {
@@ -19,11 +21,29 @@ namespace ef.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseNpgsql(@"Host=localhost;Port=5432;Username=postgres;Password=;Database=postgres;");
-            //optionsBuilder.UseSqlServer(@"Server=tcp:rdexampledb1svr.database.windows.net,1433;Initial Catalog=RdExampleDb1;Persist Security Info=False;User ID=[user];Password=[password];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
-            //optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=aspnetcore;Trusted_Connection=True;MultipleActiveResultSets=true");
-            //optionsBuilder.UseSqlServer(@"Server=(localdb)\ProjectsV13;Database=aspnetcore;Trusted_Connection=True;MultipleActiveResultSets=true");
-            optionsBuilder.UseSqlite(@"Data Source=db.sqlite");
+            if (optionsBuilder.IsConfigured) return;
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+            IConfiguration Configuration = builder.Build();
+            var dbkind = Configuration["Data:DefaultConnection:ConnectionDBString"];
+            if (dbkind.Equals("sqlite"))
+            {
+                optionsBuilder.UseSqlite(Configuration["Data:DefaultConnection:ConnectionString"]);
+            }
+            if (dbkind.Equals("sqlserver"))
+            {
+                optionsBuilder.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]);
+
+            }
+            if (dbkind.Equals("postgresql"))
+            {
+                optionsBuilder.UseNpgsql(Configuration["Data:DefaultConnection:ConnectionString"]);
+            }
+            if (dbkind.Equals("inmemory"))
+            {
+                optionsBuilder.UseInMemoryDatabase();
+            }
         }
     }
 }

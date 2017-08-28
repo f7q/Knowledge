@@ -33,25 +33,50 @@ namespace ef
         public static void Main(string[] args)
         {
             var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddCommandLine(args)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
             //IServiceCollection services = new ServiceCollection();
 
             Console.WriteLine("Hello World!");
             var service = new ServiceCollection();
-            service.AddEntityFrameworkSqlite()
-                .AddDbContext<CoreExampleContext>(o =>
-                o.UseSqlite(@"Data Source=db.sqlite"));
-            /*
-            service.AddEntityFrameworkNpgsql()
-                .AddDbContext<CoreExampleContext>(o =>
-                o.UseNpgsql(@"Host=localhost;Port=5432;Username=postgres;Password=;Database=postgres;"));
 
-            service.AddEntityFrameworkSqlServer()
-                .AddDbContext<CoreExampleContext>(o =>
-                o.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=aspnetcore;Trusted_Connection=True;MultipleActiveResultSets=true"));
-                                */
+            var dbkind = Configuration["Data:DefaultConnection:ConnectionDBString"];
+            if (dbkind.Equals("sqlite"))
+            {
+                service.AddEntityFrameworkSqlite();
+                service.AddDbContext<CoreExampleContext>(options =>
+                {
+                    options.UseSqlite(Configuration["Data:DefaultConnection:ConnectionString"]);
+                });
+            }
+            if (dbkind.Equals("sqlserver"))
+            {
+                service.AddEntityFrameworkSqlServer();
+                service.AddDbContext<CoreExampleContext>(options =>
+                {
+                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]);
+                });
+            }
+            if (dbkind.Equals("postgresql"))
+            {
+                service.AddEntityFrameworkNpgsql();
+                service.AddDbContext<CoreExampleContext>(options =>
+                {
+                    options.UseNpgsql(Configuration["Data:DefaultConnection:ConnectionString"]);
+                });
+            }
+            if (dbkind.Equals("inmemory"))
+            {
+                service.AddEntityFrameworkInMemoryDatabase();
+                service.AddDbContext<CoreExampleContext>(options =>
+                {
+                    options.UseInMemoryDatabase();
+                });
+            }
+
             var serviceProvider = service.BuildServiceProvider();
             // Setup Databases
             using (var serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())

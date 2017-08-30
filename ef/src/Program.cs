@@ -83,6 +83,7 @@ namespace ef
             {
                 var context = serviceScope.ServiceProvider.GetService<CoreExampleContext>();
                 context.Database.EnsureCreated();
+                //context.Database.EnsureDeleted();
                 //context.Database.Migrate();
                 //EnsureSeedData(serviceScope.ServiceProvider.GetService<CoreExampleContext>());
             }

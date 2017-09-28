@@ -9,7 +9,7 @@ var buildArtifacts       = Directory("./artifacts/packages");
 
 var isAppVeyor          = AppVeyor.IsRunningOnAppVeyor;
 var isWindows           = IsRunningOnWindows();
-var netcore             = "netcoreapp1.0";
+var netcore             = "netcoreapp1.1";
 var netstandard         = "netstandard1.6";
 
 ///////////////////////////////////////////////////////////////////////////////

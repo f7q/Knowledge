@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:65177/",
+      "applicationUrl": "http://localhost:65177/api/Values/safeRestart",
       "sslPort": 0
     }
   },

@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.Swagger.Model;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using WebApiSample.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -68,18 +70,22 @@ namespace WebApiSample
             }
             // Add framework services.
             services.AddMvc();
-            services.AddSwaggerGen();
-            services.ConfigureSwaggerGen(options =>
+            services.AddSwaggerGen(c =>
             {
-                options.SingleApiVersion(new Info
-                {
-                    Version = "v1",
-                    Title = "Geo Search API",
-                    Description = "A simple api to search using geo location in Elasticsearch",
-                    TermsOfService = "None"
-                });
-                //options.IncludeXmlComments(pathToDoc);
-                options.DescribeAllEnumsAsStrings();
+                c.SwaggerDoc("v1",
+                    new Info
+                    {
+                        Version = "v1",
+                        Title = "Geo Search API",
+                        Description = "A simple api to search using geo location in Elasticsearch",
+                        TermsOfService = "None"
+                    }
+                 );
+
+                //var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "MyApi.xml");
+                //c.IncludeXmlComments(filePath);
+                //c.IncludeXmlComments(pathToDoc);
+                c.DescribeAllEnumsAsStrings();
             });
         }
 
@@ -91,8 +97,14 @@ namespace WebApiSample
 
             app.UseMvc();
 
-            app.UseSwagger();
-            app.UseSwaggerUi();
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "api-docs/{documentName}/swagger.json";
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/api-docs/v1/swagger.json", "My API V1");
+            });
         }
     }
 }

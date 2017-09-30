@@ -41,9 +41,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.2" />
     <!--
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.2">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
     <DotNetCliToolReference Include="Microsoft.Composition" Version="1.0.30" ExcludeAssets="All" />
     <DotNetCliToolReference Include="System.Composition" Version="1.0.31" />
     -->
@@ -54,14 +51,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.1.0-preview4-final">
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.1">
+      <PrivateAssets>All</PrivateAssets>
+    </DotNetCliToolReference>
+    <DotNetCliToolReference Include="Microsoft.AspNetCore.Razor.Tools" Version="1.1.0-preview4-final">
+      <PrivateAssets>All</PrivateAssets>
+    </DotNetCliToolReference>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.1.0-preview4-final">
+      <PrivateAssets>All</PrivateAssets>
+    </DotNetCliToolReference>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.1.0-preview4-final">
       <PrivateAssets>All</PrivateAssets>
     </DotNetCliToolReference>
     <!--
     <DotNetCliToolReference Include="Microsoft.Composition" Version="1.0.30" ExcludeAssets="All" />
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.2">
-      <PrivateAssets>All</PrivateAssets>
-    </DotNetCliToolReference>
     -->
 
   </ItemGroup>

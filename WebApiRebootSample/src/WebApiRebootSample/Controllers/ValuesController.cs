@@ -22,13 +22,13 @@ namespace WebApiRebootSample.Controllers
         {
             return new string[] { "value1", "value2" };
         }
-        // GET api/safeRestart
+        // GET api/values/safeRestart
         [HttpGet]
         [Route("safeRestart")]
         public void GetSafeRestart()
         {
             var process = Process.GetCurrentProcess();
-            /*var processId = process.Id;
+            var processId = process.Id;
             using (var newprocess = new Process())
             {
                 var startinfo = process.StartInfo;
@@ -42,10 +42,11 @@ namespace WebApiRebootSample.Controllers
                 //Program.Main();
                 if (process.HasExited)
                 {
+                    Console.WriteLine(@"restart {0}", process.ExitCode);
                     newprocess.Start();
                     Console.WriteLine(@"restart {0}", process.ExitCode);
                 }
-            }*/
+            }
             //this._life.StopApplication();
             //this._life.ApplicationStarted;
 

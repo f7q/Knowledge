@@ -42,6 +42,7 @@ namespace WebApiFileUploadSample.Controllers
         {
             try
             {
+                // issue ? don't download
                 var val = _dbContext.Values.FirstOrDefault(d => d.Name == name);
                 return File(val.Image, "image/png");
             }

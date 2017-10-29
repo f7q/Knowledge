@@ -1,0 +1,7 @@
+dotnet ef dbcontext scaffold "Data Source=..\..\..\db.sqlite" Microsoft.EntityFrameworkCore.Sqlite -o Models
+dotnet ef dbcontext scaffold ^
+        "Data Source=Host=localhost;Port=5432;Username=postgres;Password=;Database=postgres;" ^
+        Npgsql.EntityFrameworkCore.PostgreSQL -o Models
+dotnet ef dbcontext scaffold ^
+        "Host=localhost;Port=5432;Username=postgres;Password=;Database=postgres;" ^
+        Npgsql.EntityFrameworkCore.PostgreSQL -o Models

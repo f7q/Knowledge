@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace ef.Models
 {
+    using System;
+
     public class CoreExampleContext : DbContext
     {
         public DbSet<Company> Company { get; set; }
@@ -42,7 +44,7 @@ namespace ef.Models
             }
             if (dbkind.Equals("inmemory"))
             {
-                optionsBuilder.UseInMemoryDatabase();
+                optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
             }
         }
     }

@@ -9,8 +9,8 @@ var buildArtifacts       = Directory("./artifacts/packages");
 
 var isAppVeyor          = AppVeyor.IsRunningOnAppVeyor;
 var isWindows           = IsRunningOnWindows();
-var netcore             = "netcoreapp1.1";
-var netstandard         = "netstandard1.6";
+var netcore             = "netcoreapp2.0";
+var netstandard         = "netstandard2.0";
 
 ///////////////////////////////////////////////////////////////////////////////
 // Clean

@@ -15,6 +15,7 @@ namespace ef
 {
     public class Program
     {
+        /*
         private static DbContextOptions<CoreExampleContext> CreateNewContextOptions()
         {
             var serviceProvider = new ServiceCollection()
@@ -27,6 +28,8 @@ namespace ef
 
             return builder.Options;
         }
+        */
+
         private static IConfigurationRoot Configuration { get; set; }
         private static IHostingEnvironment HostingEnvironment { get; set; }
 
@@ -73,7 +76,7 @@ namespace ef
                 service.AddEntityFrameworkInMemoryDatabase();
                 service.AddDbContext<CoreExampleContext>(options =>
                 {
-                    options.UseInMemoryDatabase();
+                    options.UseInMemoryDatabase(Guid.NewGuid().ToString());
                 });
             }
 

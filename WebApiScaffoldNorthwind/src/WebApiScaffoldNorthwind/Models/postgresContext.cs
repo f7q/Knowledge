@@ -8,7 +8,7 @@
     public partial class PostgresContext : DbContext
     {
         //
-        public DbSet<Value> Values { get; set; }
+        public virtual DbSet<Value> Values { get; set; }
 
         public virtual DbSet<Categories> Categories { get; set; }
         public virtual DbSet<Customercustomerdemo> Customercustomerdemo { get; set; }
@@ -50,7 +50,7 @@
                 {
                     optionsBuilder.UseSqlite(config["Data:DefaultConnection:ConnectionString"]);
                 }
-                if (dbkind.Equals("sqlite"))
+                if (dbkind.Equals("inmemory"))
                 {
                     optionsBuilder.UseInMemoryDatabase();
                     base.OnConfiguring(optionsBuilder);
@@ -62,6 +62,21 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Value>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PK_values");
+
+                entity.ToTable("Value");
+
+                entity.Property(e => e.Defaultprinter)
+                    .HasColumnName("defaultprinter")
+                    .HasColumnType("bit")
+                    .ForSqlServerHasDefaultValueSql("1::bit");
+
+                entity.Property(e => e.Name).HasColumnName("name");
+            });
+			
             modelBuilder.Entity<Categories>(entity =>
             {
                 entity.HasKey(e => e.Categoryid)

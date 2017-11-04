@@ -63,7 +63,9 @@ namespace WebApiSample.Controllers
         public IActionResult Get(int id)
         {
             IDbConnection connection = _dbContext.Database.GetDbConnection();
-            dynamic result = connection.Query($"select * from \"Values\" where id = {id}");
+            DynamicParameters dyna = new DynamicParameters();
+            dyna.Add(nameof(id), id);
+            dynamic result = connection.Query("select * from \"Values\" where id = @id", dyna);
             if (result != null)
             {
                 return Ok(result);

@@ -1,0 +1,12 @@
+using System;
+
+namespace scaffold
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+			return;
+        }
+    }
+}

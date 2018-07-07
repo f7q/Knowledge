@@ -91,7 +91,7 @@ namespace ef
                 //EnsureSeedData(serviceScope.ServiceProvider.GetService<CoreExampleContext>());
             }
         }
-
+        /*
         public static void EnsureDatabaseCreated()
         {
             var optionsBuilder = new DbContextOptionsBuilder();
@@ -107,5 +107,6 @@ namespace ef
             else if (HostingEnvironment.IsProduction()) optionsBuilder.UseSqlServer(Configuration["Data:live:TransientContext"]);
             new CoreExampleContext(optionsBuilder.Options).Database.EnsureCreated();
         }
+        */
     }
 }

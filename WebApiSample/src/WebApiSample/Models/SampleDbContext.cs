@@ -25,7 +25,11 @@ namespace WebApiSample.Models
                     .Build();
 
                 var dbkind = config["Data:DefaultConnection:ConnectionDBString"];
-                if(dbkind.Equals("sqlite"))
+                if (dbkind.Equals("mysql"))
+                {
+                    optionsBuilder.UseMySql(config["Data:DefaultConnection:ConnectionString"]);
+                }
+                if (dbkind.Equals("sqlite"))
                 {
                     optionsBuilder.UseSqlite(config["Data:DefaultConnection:ConnectionString"]);
                 }

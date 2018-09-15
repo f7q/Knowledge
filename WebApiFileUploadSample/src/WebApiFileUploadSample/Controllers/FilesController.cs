@@ -30,7 +30,7 @@ namespace WebApiFileUploadSample.Controllers
                 var list = _dbContext.Values.ToList();
                 return Ok(list);
             }
-            catch (Exception ex)
+            catch
             {
                 return NotFound();
             }
@@ -46,7 +46,7 @@ namespace WebApiFileUploadSample.Controllers
                 var val = _dbContext.Values.FirstOrDefault(d => d.Name == name);
                 return File(val.Image, "image/png");
             }
-            catch (Exception ex)
+            catch
             {
                 return NotFound();
             }
@@ -73,7 +73,7 @@ namespace WebApiFileUploadSample.Controllers
 
                 return Ok();
             }
-            catch (Exception ex)
+            catch
             {
                 return BadRequest();
             }
@@ -90,7 +90,7 @@ namespace WebApiFileUploadSample.Controllers
                 _dbContext.SaveChanges();
                 return Ok();
             }
-            catch (Exception ex)
+            catch
             {
                 return NotFound();
             }
@@ -106,7 +106,7 @@ namespace WebApiFileUploadSample.Controllers
                 _dbContext.SaveChanges();
                 return Ok();
             }
-            catch (Exception ex)
+            catch
             {
                 return NotFound();
             }

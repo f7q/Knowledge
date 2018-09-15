@@ -36,6 +36,14 @@ namespace WebApiSample
             services.AddLogging();
             
             var dbkind = Configuration["Data:DefaultConnection:ConnectionDBString"];
+            if (dbkind.Equals("mysql"))
+            {
+                services.AddEntityFrameworkMySql();
+                services.AddDbContext<SampleDbContext>(options =>
+                {
+                    options.UseMySql(Configuration["Data:DefaultConnection:ConnectionString"]);
+                });
+            }
             if(dbkind.Equals("sqlite"))
             {
                 services.AddEntityFrameworkSqlite();
@@ -65,7 +73,7 @@ namespace WebApiSample
                 services.AddEntityFrameworkInMemoryDatabase();
                 services.AddDbContext<SampleDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase();
+                    options.UseInMemoryDatabase(Guid.NewGuid().ToString());
                 });
             }
             // Add framework services.
@@ -94,7 +102,7 @@ namespace WebApiSample
         {
             //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
+            InitDatabse(app);
             app.UseMvc();
 
             app.UseSwagger(c =>
@@ -105,6 +113,15 @@ namespace WebApiSample
             {
                 c.SwaggerEndpoint("/api-docs/v1/swagger.json", "My API V1");
             });
+        }
+
+        private void InitDatabse(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<SampleDbContext>();
+                context.Database.EnsureCreated();
+            }
         }
     }
 }

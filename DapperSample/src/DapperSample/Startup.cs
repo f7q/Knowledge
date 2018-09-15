@@ -47,7 +47,8 @@ namespace WebApiSample
                     options.UseSqlite(Configuration["Data:DefaultConnection:ConnectionString"]);
                 });
             }
-            if(dbkind.Equals("sqlserver"))
+
+            if (dbkind.Equals("sqlserver"))
             {
                 services.AddEntityFrameworkSqlServer();
                 services.AddDbContext<SQLServerDbContext>(options =>
@@ -55,7 +56,8 @@ namespace WebApiSample
                     options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]);
                 });
             }
-            if(dbkind.Equals("postgresql"))
+
+            if (dbkind.Equals("postgresql"))
             {
                 services.AddEntityFrameworkNpgsql();
                 services.AddDbContext<PostgreSQLDbContext>(options =>
@@ -63,7 +65,8 @@ namespace WebApiSample
                     options.UseNpgsql(Configuration["Data:DefaultConnection:ConnectionString"]);
                 });
             }
-            if(dbkind.Equals("inmemory"))
+
+            if (dbkind.Equals("inmemory"))
             {
                 services.AddEntityFrameworkInMemoryDatabase();
                 services.AddDbContext<InMemoryDbContext>(options =>
@@ -71,6 +74,7 @@ namespace WebApiSample
                     options.UseInMemoryDatabase();
                 });
             }
+
             // Add framework services.
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -108,6 +112,17 @@ namespace WebApiSample
             {
                 c.SwaggerEndpoint("/api-docs/v1/swagger.json", "My API V1");
             });
+
+            Initialize(app);
+        }
+
+        private void Initialize(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<SampleDbContext>();
+                context.Database.EnsureCreated();
+            }
         }
     }
 }
